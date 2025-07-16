@@ -1,5 +1,6 @@
 # Ignore compiled binaries
-
+*.exe
+*.dll
 
 # Ignore build outputs
 build/
