@@ -1,0 +1,12 @@
+# Ignore compiled binaries
+*.exe
+*.dll
+
+# Ignore build outputs
+build/
+
+# VSCode settings
+.vscode/
+
+# Code workspace files
+*.code-workspace
