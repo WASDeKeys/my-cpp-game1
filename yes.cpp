@@ -3,19 +3,16 @@
 
 int main()
 {
-    //variables for, circle and rectangle
+    // Window and game variables
     int windowWidth = 800;
     int windowHeight = 450;
     int circleRadius;
     int circleX = 400;
     int circleY = 225;
-    //variables for rectangle
     int axeLength;
     int axeX = 300;
     int axeY = 225;
-    //direction of the rectangle
     int direction = 10;
-    //boolean for collision
     bool collisionWithAxe = false;
 
     std::cout << "Enter Radius of the circle" << std::endl;
@@ -26,26 +23,25 @@ int main()
     std::cin >> axeLength;
     if (axeLength < 0) axeLength = 50;
 
-    InitWindow(windowWidth, windowHeight, "go on then");
-
-    SetTargetFPS(60); // Set the game to run at 60 frames-per-second
+    InitWindow(windowWidth, windowHeight, "Dodge the Axe!");
+    SetTargetFPS(60);
 
     double immunityStart = GetTime();
     bool immune = true;
 
-    while (WindowShouldClose() == false)
+    while (!WindowShouldClose())
     {
-        // Update immunity
+        // Handle immunity for first 2 seconds
         if (immune && (GetTime() - immunityStart >= 2.0))
         {
             immune = false;
         }
 
-        // Update rectangle (axe) position
+        // Move axe horizontally
         if (axeX + axeLength >= windowWidth || axeX <= 0) direction = -direction;
         axeX += direction;
 
-        // Move circle only up and down if no collision
+        // Move circle up/down if no collision
         if (!collisionWithAxe)
         {
             if (IsKeyDown(KEY_W) && circleY - circleRadius > 0) circleY -= 10;
@@ -58,8 +54,8 @@ int main()
         int uAxeY = axeY;
         int bAxeY = axeY + axeLength;
 
-        int lCirclex = circleX - circleRadius;
-        int rCirclex = circleX + circleRadius;
+        int lCircleX = circleX - circleRadius;
+        int rCircleX = circleX + circleRadius;
         int uCircleY = circleY - circleRadius;
         int bCircleY = circleY + circleRadius;
 
@@ -67,8 +63,8 @@ int main()
         if (!immune)
         {
             collisionWithAxe =
-                rAxeX >= lCirclex &&
-                lAxeX <= rCirclex &&
+                rAxeX >= lCircleX &&
+                lAxeX <= rCircleX &&
                 bAxeY >= uCircleY &&
                 uAxeY <= bCircleY;
         }
@@ -84,8 +80,8 @@ int main()
         {
             DrawText("GAME OVER!", 320, 200, 40, RED);
             EndDrawing();
-            WaitTime(1.0); // Show GAME OVER for a moment
-            break; // Exit the loop to close window
+            WaitTime(1.0);
+            break;
         }
         else
         {
@@ -96,3 +92,9 @@ int main()
                 DrawText("IMMUNE!", 350, 20, 30, BLUE);
             }
         }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+}
