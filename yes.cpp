@@ -1,100 +1,61 @@
 #include "raylib.h"
-#include <iostream>
-
 int main()
 {
-    // Window and game variables
-    int windowWidth = 800;
-    int windowHeight = 450;
-    int circleRadius;
-    int circleX = 400;
-    int circleY = 225;
-    int axeLength;
-    int axeX = 300;
-    int axeY = 225;
-    int direction = 10;
-    bool collisionWithAxe = false;
+    // window dimensions
+    int width{800};
+    int height{450};
+    InitWindow(width, height, "Stephen's Window");
 
-    std::cout << "Enter Radius of the circle" << std::endl;
-    std::cin >> circleRadius;
-    if (circleRadius < 0) circleRadius = 25;
+    // circle coordinates
+    int circle_x{200};
+    int circle_y{200};
+    int circle_radius{25};
+    // circle edges
+    int l_circle_x{circle_x - circle_radius};
+    int r_circle_x{circle_x + circle_radius};
+    int u_circle_y{circle_y - circle_radius};
+    int b_circle_y{circle_y + circle_radius};
 
-    std::cout << "Enter length of the rectangle" << std::endl;
-    std::cin >> axeLength;
-    if (axeLength < 0) axeLength = 50;
+    // axe coordinates
+    int axe_x{400};
+    int axe_y{0};
+    int axe_length{50};
+    // axe edges
+    int l_axe_x{axe_x};
+    int r_axe_x{axe_x + axe_length};
+    int u_axe_y{axe_y};
+    int b_axe_y{axe_y + axe_length};
 
-    InitWindow(windowWidth, windowHeight, "Dodge the Axe!");
+    int direction{10};
+
     SetTargetFPS(60);
-
-    double immunityStart = GetTime();
-    bool immune = true;
-
-    while (!WindowShouldClose())
+    while (WindowShouldClose() == false)
     {
-        // Handle immunity for first 2 seconds
-        if (immune && (GetTime() - immunityStart >= 2.0))
-        {
-            immune = false;
-        }
-
-        // Move axe horizontally
-        if (axeX + axeLength >= windowWidth || axeX <= 0) direction = -direction;
-        axeX += direction;
-
-        // Move circle up/down if no collision
-        if (!collisionWithAxe)
-        {
-            if (IsKeyDown(KEY_W) && circleY - circleRadius > 0) circleY -= 10;
-            if (IsKeyDown(KEY_S) && circleY + circleRadius < windowHeight) circleY += 10;
-        }
-
-        // Calculate edges for collision detection
-        int lAxeX = axeX;
-        int rAxeX = axeX + axeLength;
-        int uAxeY = axeY;
-        int bAxeY = axeY + axeLength;
-
-        int lCircleX = circleX - circleRadius;
-        int rCircleX = circleX + circleRadius;
-        int uCircleY = circleY - circleRadius;
-        int bCircleY = circleY + circleRadius;
-
-        // Collision detection (AABB) with immunity
-        if (!immune)
-        {
-            collisionWithAxe =
-                rAxeX >= lCircleX &&
-                lAxeX <= rCircleX &&
-                bAxeY >= uCircleY &&
-                uAxeY <= bCircleY;
-        }
-        else
-        {
-            collisionWithAxe = false;
-        }
-
         BeginDrawing();
         ClearBackground(WHITE);
 
-        if (collisionWithAxe)
+        // Game logic begins
+
+        DrawCircle(circle_x, circle_y, circle_radius, BLUE);
+        DrawRectangle(axe_x, axe_y, axe_length, axe_length, RED);
+
+        // move the axe
+        axe_y += direction;
+        if (axe_y > height || axe_y < 0)
         {
-            DrawText("GAME OVER!", 320, 200, 40, RED);
-            EndDrawing();
-            WaitTime(1.0);
-            break;
-        }
-        else
-        {
-            DrawCircle(circleX, circleY, circleRadius, VIOLET);
-            DrawRectangle(axeX, axeY, axeLength, axeLength, GREEN);
-            if (immune)
-            {
-                DrawText("IMMUNE!", 350, 20, 30, BLUE);
-            }
+            direction = -direction;
         }
 
+        if (IsKeyDown(KEY_D) && circle_x < width)
+        {
+            circle_x += 10;
+        }
+        if (IsKeyDown(KEY_A) && circle_x > 0)
+        {
+            circle_x -= 10;
+        }
+
+        // Game logic ends
         EndDrawing();
     }
-
-    CloseWindow();
 }
